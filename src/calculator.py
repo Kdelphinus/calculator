@@ -9,6 +9,7 @@ class Calculator:
         self.equation = tk.StringVar()
         self.log = tk.StringVar()
 
+        self.log.set("0")
         self.root.title("Calculator")
         self.root.configure(background="#434343")
         self.root.geometry("+800+300")
@@ -18,18 +19,21 @@ class Calculator:
         self.root.mainloop()
 
     def _clear(self) -> None:
-        self.expression = ""
+        self.expression = "0"
         self.equation.set("")
-        self.log.set("")
+        self.log.set("0")
 
     def _equal(self) -> None:
         try:
-            ans = str(eval(self.expression))
+            ans = str(int(eval(self.expression)))
             self.equation.set(ans)
             self.log.set(self.log.get() + f"\n{self.expression} = {ans}")
             self.expression = ""
         except SyntaxError:
-            self.equation.set("Error")
+            self.equation.set("alert")
+            self.expression = ""
+        except ZeroDivisionError:
+            self.equation.set("숫자 아님")
             self.expression = ""
 
     def _press(self, num: str) -> None:
