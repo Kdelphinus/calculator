@@ -19,6 +19,11 @@ class Calculator:
         self.root.mainloop()
 
     def _clear(self) -> None:
+        self.expression = self.equation.get()
+        self.expression = self.expression[:-1]
+        self.equation.set(self.expression)
+
+    def _all_clear(self) -> None:
         self.expression = "0"
         self.equation.set("")
         self.log.set("0")
@@ -26,9 +31,12 @@ class Calculator:
     def _equal(self) -> None:
         try:
             ans = str(int(eval(self.expression)))
+            ans = ans if len(ans) <= 10 else "Infinity"
             self.equation.set(ans)
             self.log.set(self.log.get() + f"\n{self.expression} = {ans}")
             self.expression = ""
+            print("\n=")
+            print(ans)
         except SyntaxError:
             self.equation.set("alert")
             self.expression = ""
@@ -39,8 +47,12 @@ class Calculator:
     def _press(self, num: str) -> None:
         if not self.expression and not num.isdigit():
             self.expression = self.equation.get() + num
+            print()
         else:
+            if not num.isdigit() and not self.expression[-1].isdigit():
+                self.expression = self.expression[:-1]
             self.expression = self.expression + num
+            print(num, end="") if num.isdigit() else print("\n" + num)
         self.equation.set(self.expression)
 
     def _set_display(self) -> None:
@@ -160,6 +172,15 @@ class Calculator:
             padx=20,
             pady=10,
         )
+        btn_all_clear = tk.Button(
+            self.root,
+            command=lambda: self._all_clear(),
+            fg="#DEDEDE",
+            bg="#606060",
+            text="AC",
+            padx=20,
+            pady=10,
+        )
         btn_plus = tk.Button(
             self.root,
             command=lambda: self._press("+"),
@@ -237,12 +258,15 @@ class Calculator:
         btn_4.grid(row=4, column=0, sticky=tk.N + tk.E + tk.W + tk.S, padx=3, pady=3)
         btn_5.grid(row=4, column=1, sticky=tk.N + tk.E + tk.W + tk.S, padx=3, pady=3)
         btn_6.grid(row=4, column=2, sticky=tk.N + tk.E + tk.W + tk.S, padx=3, pady=3)
-        btn_equal.grid(
-            row=4, column=3, rowspan=3, sticky=tk.N + tk.E + tk.W + tk.S, padx=3, pady=3
+        btn_all_clear.grid(
+            row=4, column=3, sticky=tk.N + tk.E + tk.W + tk.S, padx=3, pady=3
         )
         btn_1.grid(row=5, column=0, sticky=tk.N + tk.E + tk.W + tk.S, padx=3, pady=3)
         btn_2.grid(row=5, column=1, sticky=tk.N + tk.E + tk.W + tk.S, padx=3, pady=3)
         btn_3.grid(row=5, column=2, sticky=tk.N + tk.E + tk.W + tk.S, padx=3, pady=3)
+        btn_equal.grid(
+            row=5, column=3, rowspan=2, sticky=tk.N + tk.E + tk.W + tk.S, padx=3, pady=3
+        )
         btn_0.grid(
             row=6,
             column=0,
